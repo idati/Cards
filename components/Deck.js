@@ -1,13 +1,13 @@
 import React from 'react'
 import {View, 
-		Text, 
-		TouchableOpacity, 
-		Button, 
-		FlatList, 
-		StyleSheet,
+    Text, 
+    TouchableOpacity, 
+    Button, 
+    FlatList, 
+    StyleSheet,
     KeyboardAvoidingView,
     TextInput,
-		Platform} from 'react-native'
+    Platform} from 'react-native'
 import {TabNavigator, StackNavigator, DrawerNavigator} from 'react-navigation'
 import {white, purple} from '../utils/colors'
 import{FontAwesome, Ionicons, MaterialIcons} from '@expo/vector-icons'
@@ -21,29 +21,46 @@ import Quiz from './Quiz'
 
 export default class Deck extends React.Component {
 
-	state={
-		dat: [],
-    new: false,
-    text: 'NewDeckName',
-	}
 
-	// componentDidMount(){
+  constructor(props) {
+      super(props)
 
-	// 	getDecks().then(res => {
- //          var arrayvar=[]
+      this.state={
+         dat: [],
+         new: false,
+         text: 'NewDeckName',
+      }
 
-	// 				for(key in res){
-	
-	// 					arrayvar.push(res[key])
-
-	// 				}
-
- //          this.setState({dat: arrayvar})
-
-	// 			})
+      this.renderItem = this.renderItem.bind(this);
+      this.changes = this.changes.bind(this);
+      this.inserts = this.inserts.bind(this);
+      this.insertNewDeck = this.insertNewDeck.bind(this);
+      this.updateState = this.updateState.bind(this);
+      this.deleteDeck = this.deleteDeck.bind(this);
 
 
-	// } 
+
+      // this = this.bind(this);
+    }
+
+
+  componentDidMount(){
+
+   getDecks().then(res => {
+          var arrayvar=[]
+
+         for(key in res){
+  
+           arrayvar.push(res[key])
+
+         }
+
+          this.setState({dat: arrayvar})
+
+       })
+
+
+  } 
 
 
 
@@ -81,10 +98,10 @@ export default class Deck extends React.Component {
     this.setState({dat: res})
   }
 
-	static navigationOptions = {
-    	title: 'Deck',
-    	
-  	}
+  static navigationOptions = {
+      title: 'Deck',
+      
+    }
 
 
     componentDidUpdate(prevProps, prevState) {
@@ -105,30 +122,39 @@ export default class Deck extends React.Component {
     }
 
 
-  	constructor(props) {
-    	super(props)
-
-    	this.renderItem = this.renderItem.bind(this);
-      // this = this.bind(this);
-  	}
 
 
 
- 	renderItem({ item }) {
- 		console.log('check',item, this.state, this)
-    	const { navigation } = this.props;
+  renderItem({ item }) {
+    console.log('check',item, this.state, this)
+      const { navigation } = this.props;
 
-    	return (
-    		<TouchableOpacity 
-    			style={styles.container}
-    			onPress={() => this.props.navigation.navigate('Card',{title:item, deleteDeck:this.deleteDeck, deletet:false})}>
-    			<View><Text>{item.title}</Text></View>
-    		</TouchableOpacity>
+      return (
+        <TouchableOpacity 
+          style={styles.container}
+          onPress={() => this.props.navigation.navigate('Card',{title:item, deleteDeck:this.deleteDeck, deletet:false})}>
+          <View><Text>{item.title}</Text></View>
+        </TouchableOpacity>
 
     )
-  	}
+    }
 
-	render(){
+  changes(){
+    this.setState({new: true})
+  }
+
+  inserts(){
+
+      saveDeckTitle(this.state.text),
+      this.insertNewDeck(this.state.text),
+      // 
+      // this.updateState(),
+      this.setState({text:'NewDeckName'}),
+      this.props.navigation.navigate('Card',{title:{'title':this.state.text, 'questions':[]}, deleteDeck:this.deleteDeck, deletet:false})
+      
+  }
+
+  render(){
 
 
   if (this.state.new===false){
@@ -143,9 +169,10 @@ export default class Deck extends React.Component {
                 </FlatList>
               </View>
                <TouchableOpacity style={styles.button} onPress={() => (
-                                            console.log('this',this), 
-                                            this.setState({new: true}),
-                                            console.log('18:15',this)
+                                              this.changes()
+                                            // console.log('this',this), 
+                                            // this.setState({new: true}),
+                                            // console.log('18:15',this)
                   )}>
                <Text style={styles.submitBtnText}>New Deck</Text>
                 </TouchableOpacity>
@@ -165,13 +192,14 @@ export default class Deck extends React.Component {
                          />
                      </View>
                         <TouchableOpacity style={styles.button} onPress={() => (
-                            console.log('this',this.state.text),
+                            this.inserts()
+                            // console.log('this',this.state.text),
+                            // saveDeckTitle(this.state.text),
+                            // this.insertNewDeck(this.state.text),
+                            // this.updateState(),
+                            // this.props.navigation.navigate('Card',{title:{'title':this.state.text, 'questions':[]}, deleteDeck:this.deleteDeck, deletet:false}),
+                            // this.setState({text:'NewDeckName'})
 
-                            saveDeckTitle(this.state.text),
-                            this.insertNewDeck(this.state.text),
-                            this.updateState(),
-                            this.props.navigation.navigate('Card',{title:{'title':this.state.text, 'questions':[]}, deleteDeck:this.deleteDeck, deletet:false}),
-                            this.setState({text:'NewDeckName'})
 
                           )}><Text style={styles.submitBtnText}>Insert</Text>
                         </TouchableOpacity>
@@ -181,7 +209,7 @@ export default class Deck extends React.Component {
   
 
       }
-	}
+  }
 }
 
 

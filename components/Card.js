@@ -63,6 +63,9 @@ export default class Card extends React.Component {
 
 
     this.renderItem = this.renderItem.bind(this);
+    this.update = this.update.bind(this);
+    this.delDeck = this.delDeck.bind(this);
+    this.goToQuiz = this.goToQuiz.bind(this);
   }
 
 
@@ -116,6 +119,27 @@ export default class Card extends React.Component {
     
     }
 
+  update(value){
+     this.setState({new: value})
+  }
+  delDeck(){
+    this.props.navigation.state.params.deleteDeck(this.props.navigation.state.params),
+    this.props.navigation.navigate(
+            'Deck',
+            { shouldDelete: this.props.navigation.state.params }
+    )
+
+  }
+
+  goToQuiz(){
+        this.props.navigation.navigate(
+            'Quiz',
+            { shouldDelete: this.props.navigation.state.params,
+               cdat: this.state.cdat,
+              timeStamp: Date.now()}
+      )
+  }
+
 // 
   render() {
 
@@ -136,40 +160,44 @@ export default class Card extends React.Component {
                     <View style={styles.cont}>
                     <TouchableOpacity style={styles.button} 
                                 onPress={() => 
-                                  (console.log('this',this), 
+                                  this.delDeck()
+                                  // (console.log('this',this), 
                                   // this.setState({deletet: true}),
-                                  this.props.navigation.state.params.deleteDeck(this.props.navigation.state.params),
-                                  this.props.navigation.navigate(
-                                          'Deck',
-                                          { shouldDelete: this.props.navigation.state.params }
-                      ))}>
+                                  // this.props.navigation.state.params.deleteDeck(this.props.navigation.state.params),
+                                  // this.props.navigation.navigate(
+                                  //         'Deck',
+                                  //         { shouldDelete: this.props.navigation.state.params }
+                                  // )
+                                }>
                       <Text style={styles.submitBtnText}>Delete Deck</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.button} 
                                 onPress={() => 
-                                  (console.log('this',this), 
-                                    this.setState({new: true})
+                                  // (console.log('this',this), 
+                                  this.update(true)
+                                    // this.setState({new: true})
                                   // this.props.navigation.state.params.deleteDeck(this.props.navigation.state.params),
                                   // this.props.navigation.navigate(
                                   //         'SinglCard',
                                   //         { shouldDelete: this.props.navigation.state.params }
                       // )
-                      )}>
+                      }>
                       <Text style={styles.submitBtnText}>New Card</Text>
                     </TouchableOpacity>
                    
                     <TouchableOpacity style={styles.button} 
                                 onPress={() => 
-                                  (console.log('this',this), 
+                                  this.goToQuiz()
+                                  // console.log('this',this), 
                                     // this.setState({new: true})
                                   // this.props.navigation.state.params.deleteDeck(this.props.navigation.state.params),
-                                  this.props.navigation.navigate(
-                                          'Quiz',
-                                          { shouldDelete: this.props.navigation.state.params,
-                                            cdat: this.state.cdat,
-                                            timeStamp: Date.now()}
-                      )
-                      )}>
+                                  // this.props.navigation.navigate(
+                                  //         'Quiz',
+                                  //         { shouldDelete: this.props.navigation.state.params,
+                                  //           cdat: this.state.cdat,
+                                  //           timeStamp: Date.now()}
+                                  //   )
+                      }>
                       <Text style={styles.submitBtnText}>Start Quiz</Text>
                     </TouchableOpacity>
 
