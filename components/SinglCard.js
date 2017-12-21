@@ -19,17 +19,15 @@ class SingleCard extends React.Component {
     	};
   	}
 
-
-	render(){
-		
-		if (this.props.navigation){
-				if(this.props.navigation.state.params){
-								console.log('checkkk',this.state, this.props.navigation.state.params.viewer)}
+	componentDidUpdate(){
+				if (this.props.navigation){
+				// if(this.props.navigation.state.params){
+								// console.log('checkkk',this.state, this.props.navigation.state.params.viewer)}
 
 				// if(this.props.navigation.state.params && this.state.view===false){
 				if(this.props.navigation.state.params && this.props.navigation.state.params.viewer.question!==this.state.info.question){	
 					if( this.props.navigation.state.params.viewer){
-										console.log('IamLookingForYou',this.props.navigation.state.params.viewer)
+										// console.log('IamLookingForYou',this.props.navigation.state.params.viewer)
 										this.setState({ view:true, 
 														question: this.props.navigation.state.params.viewer.question,
 														answer: this.props.navigation.state.params.viewer.answer,
@@ -37,6 +35,27 @@ class SingleCard extends React.Component {
 										})
 					}
 				}
+			}
+	}
+
+
+	render(){
+		
+		if (this.props.navigation){
+				// if(this.props.navigation.state.params){
+								// console.log('checkkk',this.state, this.props.navigation.state.params.viewer)}
+
+				// if(this.props.navigation.state.params && this.state.view===false){
+				// if(this.props.navigation.state.params && this.props.navigation.state.params.viewer.question!==this.state.info.question){	
+				// 	if( this.props.navigation.state.params.viewer){
+				// 						// console.log('IamLookingForYou',this.props.navigation.state.params.viewer)
+				// 						this.setState({ view:true, 
+				// 										question: this.props.navigation.state.params.viewer.question,
+				// 										answer: this.props.navigation.state.params.viewer.answer,
+				// 										info: this.props.navigation.state.params.viewer
+				// 						})
+				// 	}
+				// }
 
 				if(this.state.view===true){
 			return(
@@ -53,7 +72,7 @@ class SingleCard extends React.Component {
 		              value={this.state.answer}
 		       		/>
 		       		 <TouchableOpacity style={styles.button} onPress={() => (
-		        		console.log('thisSingleCard',this,this.props.deckName, this.state.question, this.state.answer),
+		        		// console.log('thisSingleCard',this,this.props.deckName, this.state.question, this.state.answer),
 		        		// this.props.navigate('Quiz',{ entryId: key}),
 		        		editCard(this.props.navigation.state.params.title, this.props.navigation.state.params.viewer.question, this.state.question, this.state.answer),
 
@@ -63,7 +82,7 @@ class SingleCard extends React.Component {
 		        	)}><Text style={styles.submitBtnText}>Edit</Text>
 		       		 </TouchableOpacity>
 		       		 <TouchableOpacity style={styles.button} onPress={() => (
-		        		console.log('thisSingleCard',this,this.props.deckName, this.state.question, this.state.answer),
+		        		// console.log('thisSingleCard',this,this.props.deckName, this.state.question, this.state.answer),
 		        		removeCardFromCards(this.props.navigation.state.params.title, this.state.question),
 
 		        		this.setState({view: false}),
@@ -77,7 +96,7 @@ class SingleCard extends React.Component {
 				)
 			}
 			else {
-				console.log('NEWNEWSINGLE!!!', this.props.navigation.state.key)
+				// console.log('NEWNEWSINGLE!!!', this.props.navigation.state.key)
 				return(
 					<View>
 						<Text>no data available</Text>
@@ -99,14 +118,14 @@ class SingleCard extends React.Component {
 		              value={this.state.answer}
 		       		/>
 		       		 <TouchableOpacity style={styles.button} onPress={() => (
-		        		console.log('thisSingleCard',this,this.props.deckName, this.state.question, this.state.answer),
+		        		// console.log('thisSingleCard',this,this.props.deckName, this.state.question, this.state.answer),
 		        		addCardToDeck(this.props.deckName, this.state.question, this.state.answer),
 		        		this.setState({view:false}),
 		        		this.props.updateState()
 		        	)}><Text style={styles.submitBtnText}>Insert</Text>
 		       		 </TouchableOpacity>
 		       		 <TouchableOpacity style={styles.button} onPress={() => (
-		        		console.log('thisSingleCard',this,this.props.deckName, this.state.question, this.state.answer),
+		        		// console.log('thisSingleCard',this,this.props.deckName, this.state.question, this.state.answer),
 		        		this.setState({view:false}),
 		        		this.props.navigation.goBack()
 		        	)}><Text style={styles.submitBtnText}>Back</Text>

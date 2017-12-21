@@ -7,6 +7,7 @@ import {View,
     StyleSheet,
     KeyboardAvoidingView,
     TextInput,
+    ScrollView,
     Platform} from 'react-native'
 import {TabNavigator, StackNavigator, DrawerNavigator} from 'react-navigation'
 import {white, purple} from '../utils/colors'
@@ -15,18 +16,19 @@ import {saveDeckTitle, getDecks, removeDeckTitle} from '../utils/api'
 import Card from './Card'
 import SinglCard from './SinglCard'
 import Quiz from './Quiz'
+import { connect } from 'react-redux'
+
+import { _getDecks } from '../actions'
 
 
-
-
-export default class Deck extends React.Component {
+class Deck extends React.Component {
 
 
   constructor(props) {
       super(props)
 
       this.state={
-         dat: [],
+        dat:[],
          new: false,
          text: 'NewDeckName',
       }
@@ -37,30 +39,48 @@ export default class Deck extends React.Component {
       this.insertNewDeck = this.insertNewDeck.bind(this);
       this.updateState = this.updateState.bind(this);
       this.deleteDeck = this.deleteDeck.bind(this);
-
+      this.change_to_false = this.change_to_false.bind(this);
+      this.insert_new_deck = this.insert_new_deck.bind(this);
+      this.insertdat = this.insertdat.bind(this);
+      // this.insertarray = this.insertarray.bind(this)
 
 
       // this = this.bind(this);
     }
 
 
-  componentDidMount(){
-
-   getDecks().then(res => {
-          var arrayvar=[]
-
-         for(key in res){
+  async componentWillMount(){
+     const { dispatch, decks } = this.props
+    // var z =[]
+    let wait 
+    wait = await getDecks().then(res => {
+                                var data=[]
+                                // data.push(res)
+                                for (let key in res){
+                                  data.push(res[key])
+                                }
+                                
+                                return data
+                            }
+                    )
+                    // .then(data => {
+                    //                 try{
+                    //                   // this.setState({dat: data})
+                    //                   console.log(data)
+                    //                 } catch(error){
+                    //                   // console.log('error',error)
+                    //                 }
+                    //                   // console.log('here', data)
+                    //                   // return data
+                    //                 })
+    this.setState({dat: wait})
+    
   
-           arrayvar.push(res[key])
-
-         }
-
-          this.setState({dat: arrayvar})
-
-       })
-
-
   } 
+
+  insertdat(){
+    this.setState({dat: [{title:'test', questions:[]}]})
+  }
 
 
 
@@ -70,30 +90,29 @@ export default class Deck extends React.Component {
 
   updateStatedat=(newD)=>{
       // this.setState({dat: newValue})
-      console.log('YESSSSSSSSSS')
+      
   }
 
   insertNewDeck=(newDeck) =>{
     var hilf=this.state.dat.slice()
     var newDeckArray={}
-    console.log('newDeck',newDeck)
     newDeckArray[newDeck]={'title': newDeck, 'questions':[]}
     hilf.push(newDeckArray[newDeck])
-    console.log('hilfhilfhilf',hilf)
     this.setState({dat: hilf})
   }
 
   deleteDeck=(removeDeck) =>{
     var hilf=this.state.dat.slice()
     res=[]
-    // console.log('üüü',hilf)
+    removeDeckTitle(removeDeck.title.title)
+   
     for (i in hilf){ 
-      console.log('üüühhh',hilf[i].title, removeDeck.title.title)
+     
       if (hilf[i].title!==removeDeck.title.title){ 
             res.push(hilf[i])
       }
     }
-    console.log('hilfhilfhilf',res, this.state)
+    
 
     this.setState({dat: res})
   }
@@ -104,35 +123,36 @@ export default class Deck extends React.Component {
     }
 
 
-    componentDidUpdate(prevProps, prevState) {
+    // componentDidUpdate(prevProps, prevState) {
 
-    if(this.props.navigation.state.params){ 
-          const{shouldDelete} = this.props.navigation.state.params
-          console.log('shouldDelete',shouldDelete)
+    // if(this.props.navigation.state.params){ 
+    //       const{shouldDelete} = this.props.navigation.state.params
+    
 
-    }
-    var x = 0
+    // }
+    // var x = 0
 
-        if(this.props.navigation.state.params){
-                      removeDeckTitle(this.props.navigation.state.params.shouldDelete.title.title)
+        // if(this.props.navigation.state.params){
+        //               removeDeckTitle(this.props.navigation.state.params.shouldDelete.title.title)
 
 
-                    }
+        //             }
 
-    }
+    // }
 
 
 
 
 
   renderItem({ item }) {
-    console.log('check',item, this.state, this)
+    
       const { navigation } = this.props;
 
       return (
         <TouchableOpacity 
           style={styles.container}
-          onPress={() => this.props.navigation.navigate('Card',{title:item, deleteDeck:this.deleteDeck, deletet:false})}>
+          onPress={() => this.props.navigation.navigate('Card',{title:item, deleteDeck:this.deleteDeck, deletet:false})}
+          >
           <View><Text>{item.title}</Text></View>
         </TouchableOpacity>
 
@@ -143,15 +163,25 @@ export default class Deck extends React.Component {
     this.setState({new: true})
   }
 
+  change_to_false(){
+    this.setState({new: false})
+  }
+
   inserts(){
 
-      saveDeckTitle(this.state.text),
-      this.insertNewDeck(this.state.text),
+      // saveDeckTitle(this.state.text),
+      this.insertNewDeck(this.state.text)
       // 
       // this.updateState(),
-      this.setState({text:'NewDeckName'}),
-      this.props.navigation.navigate('Card',{title:{'title':this.state.text, 'questions':[]}, deleteDeck:this.deleteDeck, deletet:false})
+      // this.setState({text:'NewDeckName'})
+      // this.props.navigation.navigate('Card',{title:{'title':this.state.text, 'questions':[]}, deleteDeck:this.deleteDeck, deletet:false})
       
+      
+  }
+
+
+  insert_new_deck(){
+    this.setState({text:'NewDeckName'})
   }
 
   render(){
@@ -162,17 +192,23 @@ export default class Deck extends React.Component {
             return(
              <View style={{flex:1}}>
               <View style={{flex:1}}>
-                <FlatList style={{flex:1}}
-                  data={this.state.dat}
-                  keyExtractor={item => item.title}
-                  renderItem={this.renderItem}>
-                </FlatList>
+              <ScrollView>
+                {
+                  this.state.dat.map((item, key) =>(
+                       <TouchableOpacity key={key}
+                            style={styles.container}
+                            onPress={() => this.props.navigation.navigate('Card',{title:item, deleteDeck:this.deleteDeck, deletet:false})}>
+                            <View><Text>{item.title}</Text></View>
+                       </TouchableOpacity>
+                    ))
+                }
+              </ScrollView>
               </View>
                <TouchableOpacity style={styles.button} onPress={() => (
                                               this.changes()
-                                            // console.log('this',this), 
+                                            
                                             // this.setState({new: true}),
-                                            // console.log('18:15',this)
+                                            
                   )}>
                <Text style={styles.submitBtnText}>New Deck</Text>
                 </TouchableOpacity>
@@ -192,14 +228,15 @@ export default class Deck extends React.Component {
                          />
                      </View>
                         <TouchableOpacity style={styles.button} onPress={() => (
-                            this.inserts()
-                            // console.log('this',this.state.text),
-                            // saveDeckTitle(this.state.text),
-                            // this.insertNewDeck(this.state.text),
+                            this.change_to_false(),
+                            // this.inserts(),
+                            
+                            saveDeckTitle(this.state.text),
+                            this.insertNewDeck(this.state.text),
                             // this.updateState(),
-                            // this.props.navigation.navigate('Card',{title:{'title':this.state.text, 'questions':[]}, deleteDeck:this.deleteDeck, deletet:false}),
+                            this.props.navigation.navigate('Card',{title:{'title':this.state.text, 'questions':[]}, deleteDeck:this.deleteDeck, deletet:false}),
                             // this.setState({text:'NewDeckName'})
-
+                            this.insert_new_deck()
 
                           )}><Text style={styles.submitBtnText}>Insert</Text>
                         </TouchableOpacity>
@@ -264,3 +301,19 @@ const styles = StyleSheet.create({
   },
 })
 
+
+function mapStateToProps (decks) {
+
+  return {
+
+    decks
+
+  }
+
+}
+
+export default connect(
+
+  mapStateToProps,
+
+)(Deck)

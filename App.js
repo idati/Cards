@@ -22,8 +22,10 @@ import {white, purple} from './utils/colors'
 import {Constants} from 'expo'
 
 import{FontAwesome, Ionicons, Entypo, MaterialCommunityIcons} from '@expo/vector-icons'
-// import {setLocalNotification} from './utils/api'
-
+import {setLocalNotification} from './utils/api'
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+import reducer from './reducers'
 
 
 function UdaciStatusBar ({backgroundColor, ...props}){
@@ -111,17 +113,23 @@ const MainNavigator = StackNavigator({
   })
 
 export default class App extends React.Component {
+
+  componentDidMount(){
+    setLocalNotification()
+  }
+
+
  
   render() {
     return (
-
+      <Provider store={createStore(reducer)}>
         <View style={{flex:1}}>
           <UdaciStatusBar backgroundColor={purple} barStyle='light-content' />
             
               <MainNavigator/>
-           
+             
         </View>
-     
+     </Provider>
     );
   }
 }

@@ -16,7 +16,7 @@ import {white, purple} from '../utils/colors'
 import {Constants} from 'expo'
 import{FontAwesome, Ionicons, MaterialIcons} from '@expo/vector-icons'
 import Quiz from './Quiz'
-import {addCardToDeck, getDecks} from '../utils/api'
+import {addCardToDeck, getDecks, setLocalNotification, clearLocalNotification} from '../utils/api'
 import SinglCard from './SinglCard'
 
 
@@ -32,15 +32,19 @@ export default class Card extends React.Component {
     deletet: false,
   }
 
-  // componentWillMount(){
+    componentDidMount(){
+       this.runNotifiy()
+    }
+
+
     componentDidUpdate(){
     var o = 0
     getDecks().then(res => {
       resu=[]
       for(key in res){
-        // console.log('!!!!!!!!',this.props.navigation.state.params.title.title, key, o)
+        
         if (key === this.props.navigation.state.params.title.title){
-          // console.log('key',res[key])
+          
           o+=1
           resu.push(res[key])
           this.setState({cdat: resu, deletet: false})
@@ -65,7 +69,9 @@ export default class Card extends React.Component {
     this.renderItem = this.renderItem.bind(this);
     this.update = this.update.bind(this);
     this.delDeck = this.delDeck.bind(this);
-    this.goToQuiz = this.goToQuiz.bind(this);
+    this.startQuiz = this.startQuiz.bind(this);
+    this.getcdat = this.getcdat.bind(this);
+    this.runNotifiy = this.runNotifiy.bind(this);
   }
 
 
@@ -83,7 +89,7 @@ export default class Card extends React.Component {
       resu=[]
       for(key in res){
         if (key === deckName){
-          // console.log('key',res[key])
+          
           resu.push(res[key])
           this.setState({cdat: resu})
         }
@@ -96,7 +102,7 @@ export default class Card extends React.Component {
 
 
   static navigationOptions = ({navigation}) => {
-    console.log('navigation',navigation.state.params)
+    
 
     if(navigation.state.params!== undefined){const {viewer} = navigation.state.params}
 
@@ -104,7 +110,7 @@ export default class Card extends React.Component {
 
  
   renderItem({ item }) {
-   // console.log('wow',item)
+   
    if(this.props)
     {
           const { navigation } = this.props;
@@ -122,8 +128,14 @@ export default class Card extends React.Component {
   update(value){
      this.setState({new: value})
   }
+
+
+  getcdat(){
+    return this.state.cdat
+  }
   delDeck(){
     this.props.navigation.state.params.deleteDeck(this.props.navigation.state.params),
+    this.setState({deletet: false}),
     this.props.navigation.navigate(
             'Deck',
             { shouldDelete: this.props.navigation.state.params }
@@ -131,19 +143,24 @@ export default class Card extends React.Component {
 
   }
 
-  goToQuiz(){
-        this.props.navigation.navigate(
-            'Quiz',
-            { shouldDelete: this.props.navigation.state.params,
-               cdat: this.state.cdat,
-              timeStamp: Date.now()}
-      )
+  startQuiz(){
+    // console.log('ccc',this.state.cdat, this.props.navigation.state.params.title.title, Date.now(), this.props.navigation.state.params.title.title)
+    // this.props.navigation.navigate('Quiz',{ shouldDelete: this.props.navigation.state.params, cdat: this.state.cdat, timeStamp: Date.now()})
+    // this.props.navigation.navigate('Quiz',{ cdat: this.getcdat(), timeStamp: Date.now()})
+    // var datc=this.state.cdat.slice()
+    this.props.navigation.navigate('Quiz',{shouldDelete: this.props.navigation.state.params.title.title, timeStamp: Date.now()})
+  }
+
+
+  runNotifiy(){
+    clearLocalNotification().then(setLocalNotification)
   }
 
 // 
   render() {
 
   if(this.state.new===false){
+    
         if(this.props.navigation.state.params && this.state.cdat[0] && this.state.deletet==false){
 
               return (
@@ -153,7 +170,7 @@ export default class Card extends React.Component {
                       <View style={{flex:1}}>
                         <FlatList
                           data={this.state.cdat[0].questions}
-                          keyExtractor={item => item.id}
+                          keyExtractor={item => item.question}
                           renderItem={this.renderItem}>
                         </FlatList>
                       </View>
@@ -173,7 +190,7 @@ export default class Card extends React.Component {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.button} 
                                 onPress={() => 
-                                  // (console.log('this',this), 
+                                  
                                   this.update(true)
                                     // this.setState({new: true})
                                   // this.props.navigation.state.params.deleteDeck(this.props.navigation.state.params),
@@ -187,16 +204,14 @@ export default class Card extends React.Component {
                    
                     <TouchableOpacity style={styles.button} 
                                 onPress={() => 
-                                  this.goToQuiz()
-                                  // console.log('this',this), 
+                                  // clearLocalNotification().then(setLocalNotification),
+                                  // this.runNotifiy(),
+                                  this.props.navigation.navigate('Quiz',{shouldDelete: this.props.navigation.state.params.title.title, timeStamp: Date.now()})
+                                  
                                     // this.setState({new: true})
                                   // this.props.navigation.state.params.deleteDeck(this.props.navigation.state.params),
-                                  // this.props.navigation.navigate(
-                                  //         'Quiz',
-                                  //         { shouldDelete: this.props.navigation.state.params,
-                                  //           cdat: this.state.cdat,
-                                  //           timeStamp: Date.now()}
-                                  //   )
+                                  // this.props.navigation.navigate('Quiz',{ shouldDelete: this.props.navigation.state.params, cdat: this.state.cdat, timeStamp: Date.now()}
+                      // )
                       }>
                       <Text style={styles.submitBtnText}>Start Quiz</Text>
                     </TouchableOpacity>

@@ -9,6 +9,7 @@ class Quiz extends React.Component {
 		deck: 'nodata',
 		qdat: [],
 		tdat:[],
+		cdat:[],
     	new: false,
     	count:0,
     	card:'question',
@@ -17,27 +18,46 @@ class Quiz extends React.Component {
     	timeStamp:0,
 	}
 
+
+
+
+
+
+
 	// componentDidMount(){
 	componentDidUpdate(){
-		if (this.props.navigation.state.params && this.state.count===0 && this.state.qdat.length===0){
-			console.log(this.props.navigation.state.params.cdat[0].questions)
-			var tmp = []
-			tmp.push(this.props.navigation.state.params.cdat[0].questions)
-			this.setState({qdat: tmp, timeStamp:this.props.navigation.state.params.timeStamp})
+		// console.log("asasasa")
+		// if (this.props.navigation.state.params && this.state.count===0 && this.state.qdat.length===0){
+			
+			
+			// tmp.push(this.props.navigation.state.params.cdat[0].questions)
+			getDecks().then(res=>{
+					var tmp = []
+					
+					for (let key in res){
+						if(key===this.props.navigation.state.params.shouldDelete){
+							tmp.push(res[key])
+						}
+					}
+					
+					this.setState({qdat: tmp, timeStamp:this.props.navigation.state.params.timeStamp})
+
+			})
+			
 			// this.setState({deck: 'yes'})
 
-			console.log('bring to zero', this)
-		}
-		if(this.props.navigation.state.params && this.state.qdat[0]){
-				console.log( this.state.qdat[0][0].question, this.props.navigation.state.params.cdat[0].questions[0].question)
-			}
-		if (this.props.navigation.state.params && this.state.qdat[0] && this.state.qdat[0][0].question!==this.props.navigation.state.params.cdat[0].questions[0].question && this.state.count>0){
+			
+		// }
+		// if(this.props.navigation.state.params && this.state.qdat[0]){
+		// 		console.log( '))))',this.state.qdat[0].questions[0].question)//, this.props.navigation.state.params.cdat[0].questions[0].question)
+		// 	}
+		// if (this.props.navigation.state.params && this.state.qdat[0] && this.state.qdat[0][0].question!==this.props.navigation.state.params.cdat[0].questions[0].question && this.state.count>0){
 
-			console.log("qdat", this.state.qdat)
-			var tmp = []
-			tmp.push(this.props.navigation.state.params.cdat[0].questions)
-			this.setState({qdat: tmp, count: 0, card: 'question', wrong: 0, correct: 0})
-		}
+		// 	console.log("qdat", this.state.qdat)
+		// 	var tmp = []
+		// 	tmp.push(this.props.navigation.state.params.cdat[0].questions)
+		// 	this.setState({qdat: tmp, count: 0, card: 'question', wrong: 0, correct: 0})
+		// }
 		if(this.props.navigation.state.params && this.state.qdat[0] && this.props.navigation.state.params.timeStamp!==this.state.timeStamp && this.state.count>0){
 			this.setState({count:0, correct:0, wrong:0, timeStamp:this.props.navigation.state.params.timeStamp})
 		}
@@ -47,46 +67,47 @@ class Quiz extends React.Component {
 
 
 
- 	renderItem({ item }) {
+ 	// renderItem({ item }) {
  		
 
-    	return (
-    		<View>
-			<TouchableOpacity 
-    			style={styles.container}
-    			onPress={() => console.log(item)}>
-    			<View><Text>{item}</Text></View>
-    		</TouchableOpacity>
-    		</View>
+  //   	return (
+  //   		<View>
+		// 	<TouchableOpacity 
+  //   			style={styles.container}
+  //   			onPress={() => console.log(item)}>
+  //   			<View><Text>{item}</Text></View>
+  //   		</TouchableOpacity>
+  //   		</View>
 
-    )}
+  //   )}
 
-	render(){		
-
+	render(){	
 
 		
-		if (this.props.navigation.state.params){
+		if (this.state.qdat["0"]){
 			// console.log(this.props.navigation.state.params.cdat[0].questions.length, this.state.count)
-				if(this.props.navigation.state.params.cdat[0].questions.length>=this.state.count+1){
-				// console.log('?????',this.state.qdat[0].title)
+				// if(this.props.navigation.state.params.cdat[0].questions.length>=this.state.count+1){
+				if(this.state.qdat[0].questions.length>=this.state.count+1){
+
+				
 					
 					if(this.state.card==='question'){
 							return(
 									
 							   <View style={{flex:1}}>
-							   <Text>{this.props.navigation.state.params.cdat[0].title} - {this.state.count+1}/{this.props.navigation.state.params.cdat[0].questions.length}</Text>
+							   <Text>{this.state.qdat[0].title} - {this.state.count+1}/{this.state.qdat[0].questions.length}</Text>
 							   <TouchableOpacity style={styles.container} onPress={() => (this.setState({card: 'answer'}))}>
-							   		<Text style={styles.container}>question: {this.props.navigation.state.params.cdat[0].questions[this.state.count].question}</Text>
+							   		<Text style={styles.container}>question: {this.state.qdat[0].questions[this.state.count].question}</Text>
 							   </TouchableOpacity>
 
 									        <TouchableOpacity style={styles.button} onPress={() => (
-							                                           this.props.navigation.state.params.cdat[0].questions.length>this.state.count && this.setState({count: this.state.count+1, card: 'question', correct: this.state.correct+1})
+							                                           this.state.qdat[0].questions.length>this.state.count && this.setState({count: this.state.count+1, card: 'question', correct: this.state.correct+1})
 
 							                 )}>
 							              <Text style={styles.submitBtnText}>Correct</Text>
 							               </TouchableOpacity>
 									        <TouchableOpacity style={styles.button} onPress={() => (
-							                                           this.props.navigation.state.params.cdat[0].questions.length>this.state.count && this.setState({count: this.state.count+1, card: 'question', wrong: this.state.wrong+1})
+							                                           this.state.qdat[0].questions.length>this.state.count && this.setState({count: this.state.count+1, card: 'question', wrong: this.state.wrong+1})
 
 							                 )}>
 							              <Text style={styles.submitBtnText}>Wrong</Text>
@@ -100,19 +121,19 @@ class Quiz extends React.Component {
 							return(
 									
 							   <View style={{flex:1}}>
-							   <Text>{this.props.navigation.state.params.cdat[0].title} - {this.state.count+1}/{this.props.navigation.state.params.cdat[0].questions.length}</Text>
+							   <Text>{this.state.qdat[0].title} - {this.state.count+1}/{this.state.qdat[0].questions.length}</Text>
 							   <TouchableOpacity style={styles.container} onPress={() => (this.setState({card: 'question'}))}>
-							   		<Text style={styles.container}>answer: {this.props.navigation.state.params.cdat[0].questions[this.state.count].answer}</Text>
+							   		<Text style={styles.container}>answer: {this.state.qdat[0].questions[this.state.count].answer}</Text>
 							   </TouchableOpacity>
 									        <TouchableOpacity style={styles.button} onPress={() => (
-							                                           this.props.navigation.state.params.cdat[0].questions.length>this.state.count && this.setState({count: this.state.count+1, card: 'question', correct: this.state.correct+1})
+							                                           this.state.qdat[0].questions.length>this.state.count && this.setState({count: this.state.count+1, card: 'question', correct: this.state.correct+1})
 
 							                 )}>
 							              <Text style={styles.submitBtnText}>Correct</Text>
 							               </TouchableOpacity>
 
 									        <TouchableOpacity style={styles.button} onPress={() => (
-							                                           this.props.navigation.state.params.cdat[0].questions.length>this.state.count && this.setState({count: this.state.count+1, card: 'question', wrong: this.state.wrong+1})
+							                                           this.state.qdat[0].questions.length>this.state.count && this.setState({count: this.state.count+1, card: 'question', wrong: this.state.wrong+1})
 
 							                 )}>
 							              <Text style={styles.submitBtnText}>Wrong</Text>
@@ -126,7 +147,7 @@ class Quiz extends React.Component {
 				else{
 					return(
 						<View style={{flex:1}}>
-							<Text>{this.props.navigation.state.params.cdat[0].title} - {this.props.navigation.state.params.cdat[0].questions.length}/{this.props.navigation.state.params.cdat[0].questions.length}</Text>
+							<Text>{this.state.qdat[0].title} - {this.state.qdat[0].questions.length}/{this.state.qdat[0].questions.length}</Text>
 							<Text style={styles.container}>
 								Congrats you did it
 							</Text>

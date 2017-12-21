@@ -32,22 +32,22 @@
 //   networking
 // } from 'reactotron-react-native'
 import {AsyncStorage} from 'react-native'
-import {Notification, Permissions} from 'expo'
+import {Notifications, Permissions} from 'expo'
 
-const NOTIFICATION_KEY = 'Reminder'
+const NOTIFICATION_KEY = 'Reminderr'
 
-const STOREAGE_KEY_DECK = "Titlesee"
-const STOREAGE_KEY_CARD = "cards"
+const STOREAGE_KEY_DECK = "Titleseee"
+const STOREAGE_KEY_CARD = "cardss"
 
 // getDecks: return all of the decks along with their titles, questions, and answers. 
 export function getDecks(){
 	var jsonVariable={}
 	var title='test'
 	var tmp= jsonVariable[title]={'title': title, 'questions':[]}
-	// console.log('thats_it',tmp, jsonVariable)
+	
 	// var tmp
 	// AsyncStorage.getItem(STOREAGE_KEY_DECK).then((value) => {console.log('tmp',JSON.parse(value))})
-	// console.log('tmp',tmp)
+	
 	return AsyncStorage.getItem(STOREAGE_KEY_DECK).then(results => {return(JSON.parse(results))}
 		)
 
@@ -63,18 +63,18 @@ export function saveDeckTitle(title){
 		var res2=JSON.parse(results)
 		for(var key in res2) res[key]=res2[key]
 		for(var key in jsonVariable) res[key]=jsonVariable[key]	
-		console.log('WATCHWATCH', res)
+		
 		return(res)
 	}).then(res => {
 		return AsyncStorage.setItem(STOREAGE_KEY_DECK, JSON.stringify(res))
 	})
 
 	// var tmp= {title :{'title': title, 'questions':[]}}
-	// console.log(tmp)
+	
 	// var tmp = AsyncStorage.getItem(STOREAGE_KEY_DECK)
 	// tmp=JSON.parse(tmp)
 	// tmp.push({title:{'title': title, 'questions':[]}})
-	// console.log('tmp',tmp) 
+	 
 	// return AsyncStorage.mergeItem(STOREAGE_KEY_DECK, JSON.stringify(title:{'title': title, 'questions':[]}))
 	// return AsyncStorage.setItem(STOREAGE_KEY_DECK, 'I like to save it.')
 	// return console.log('insertText',JSON.stringify({title:{'title': title, 'questions':[]}}))
@@ -86,29 +86,30 @@ export function removeDeckTitle(title){
 		var res={}
 		var res2=JSON.parse(results)
 		for (var key in res2) if( key!==title) res[key]=res2[key]
+		
 		return(res)
 	}).then(res=> {return AsyncStorage.setItem(STOREAGE_KEY_DECK, JSON.stringify(res))})
 }
 // addCardToDeck: take in two arguments, title and card, and will add the card to the list of questions for the deck with the associated title. 
 export function addCardToDeck(title, question, answer){
-	console.log('I was here')
+	
 	AsyncStorage.getItem(STOREAGE_KEY_DECK).then(results => {
-		console.log('LookAtMe', results)
+		
 		var res2=JSON.parse(results)
 		var res={}
 		for(var key in res2){
-			console.log(key, title)
+			
 			res[key]=res2[key]
 			if( key===title){
 				
 				res[key].questions.push({'question': question, 'answer': answer})
-				console.log('hoho',res[key].questions)
+				
 			}
 		}
-		console.log('newInsertCard',res)	
+			
 		return(res)
 	}).then(res => {
-		console.log(res)
+		
 		return AsyncStorage.setItem(STOREAGE_KEY_DECK, JSON.stringify(res))
 	})
 }
@@ -118,13 +119,13 @@ export function removeCardFromCards(title, question){
 		var res2=JSON.parse(results)
 		var res={}
 		var cres={}
-		console.log('*******',res2)
+		
 		for(var key in res2){
-			console.log('öäöääö',key,title)
+			
 			if( key===title){
 				res[key]={'title': title, 'questions':[]}
 				for(var key2 in res2[key].questions){
-					console.log('cardssss',res2[key].questions[key2].question,question)
+					
 					if(res2[key].questions[key2].question!==question){
 						res[key].questions.push(res2[key].questions[key2])
 					}
@@ -134,7 +135,7 @@ export function removeCardFromCards(title, question){
 				res[key]=res2[key]
 			}
 		}
-		console.log('cardToDelete',res)
+		
 		return res
 	}).then(res => {
 		return AsyncStorage.setItem(STOREAGE_KEY_DECK, JSON.stringify(res))
@@ -146,21 +147,21 @@ export function editCard(title, question_old, question_new, answer){
 		var res2=JSON.parse(results)
 		var res={}
 		var cres={}
-		console.log('*******',res2)
+		
 		for(var key in res2){
-			console.log('öäöääö',key,title)
+			
 			if( key===title){
 				res[key]={'title': title, 'questions':[]}
 				
 				for(var key2 in res2[key].questions){
-					console.log('öäöääö###',res2[key].questions[key2].question!==question_old)
-					// console.log('cardssss',res2[key].questions[key2].question,question)
+					
+					
 					if(res2[key].questions[key2].question!==question_old){
 						res[key].questions.push(res2[key].questions[key2])
 					}
-					console.log('öäöääö###',res2[key].questions[key2].question===question_old)
+					
 					if (res2[key].questions[key2].question===question_old){
-						console.log('+++',res)
+						
 						res[key].questions.push({'question': question_new, 'answer': answer})
 						
 					}
@@ -170,13 +171,15 @@ export function editCard(title, question_old, question_new, answer){
 				res[key]=res2[key]
 			}
 		}
-		console.log('cardToDelete',res)
+		
 		return res
 	}).then(res => {
 		return AsyncStorage.setItem(STOREAGE_KEY_DECK, JSON.stringify(res))
 	})
 }
 
+
+// 
 
 export function clearLocalNotification() {
 	return AsyncStorage.removeItem(NOTIFICATION_KEY)
@@ -185,15 +188,25 @@ export function clearLocalNotification() {
 }
 
 function createNotification() {
-	return(
+	return{
 		title: 'Teach Yourself',
-		body: ' Don not forget to learn today'
-		)
+		body: ' Don not forget to learn today',
+		ios:{
+			sound: true,
+		},
+		android:{
+			sound: true,
+			priotity: 'high',
+			sticky: false,
+			vibrate: true,
+
+		}
+	}
 
 }
 
 export function setLocalNotification() {
-	AsyncStorage.removeItem(NOTIFICATION_KEY)
+	// AsyncStorage.removeItem(NOTIFICATION_KEY)
 	AsyncStorage.getItem(NOTIFICATION_KEY)
 		.then(JSON.parse)
 		.then((data) => {
@@ -201,14 +214,14 @@ export function setLocalNotification() {
 				Permissions.askAsync(Permissions.NOTIFICATIONS)
 					.then(({status}) => {
 						if(status === 'granted'){
-							Notifications.cancelAllScheduleNotificationsAsync()
+							Notifications.cancelAllScheduledNotificationsAsync()
 
 							let tomorrow = new Date()
-							tomorrow.setDate(tomorrow.getDate() + 1)
-							tomorrow.setHours(20)
-							tomorrow.setMinutes(10)
-
-							Notifications.scheduleLocalNotificationsAsync(
+							tomorrow.setDate(tomorrow.getDate()+1)
+							tomorrow.setHours(1)
+							tomorrow.setMinutes(30)
+							console.log(tomorrow)
+							Notifications.scheduleLocalNotificationAsync(
 								createNotification(),
 								{
 									time: tomorrow,
