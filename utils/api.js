@@ -97,15 +97,24 @@ export function addCardToDeck(title, question, answer){
 		
 		var res2=JSON.parse(results)
 		var res={}
+		var check=false
 		for(var key in res2){
 			
 			res[key]=res2[key]
 			if( key===title){
-				
-				res[key].questions.push({'question': question, 'answer': answer})
+				for(var key2 in res[key].questions){
+					if(res[key].questions[key2].question === question){
+						check=true
+					}
+				}
+
+					if (check === false){
+										res[key].questions.push({'question': question, 'answer': answer})
+									}
+				}
 				
 			}
-		}
+		
 			
 		return(res)
 	}).then(res => {
