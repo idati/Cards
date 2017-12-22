@@ -57,12 +57,22 @@ export function getDecks(){
 // saveDeckTitle: take in a single title argument and add it to the decks. 
 export function saveDeckTitle(title){ 
 	var jsonVariable={}
+	var check=false
 	jsonVariable[title]={'title': title, 'questions':[]}
 	AsyncStorage.getItem(STOREAGE_KEY_DECK).then(results => {
 		var res={}
 		var res2=JSON.parse(results)
-		for(var key in res2) res[key]=res2[key]
-		for(var key in jsonVariable) res[key]=jsonVariable[key]	
+		for(var key in res2){ 
+			res[key]=res2[key]
+			if (key === title){
+				check=true
+			}
+		}
+		for(var key in jsonVariable) {
+			if(check===false){
+						res[key]=jsonVariable[key]
+					}	
+		}
 		
 		return(res)
 	}).then(res => {

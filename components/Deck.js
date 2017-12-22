@@ -50,7 +50,8 @@ class Deck extends React.Component {
 
 
   async componentWillMount(){
-     const { dispatch, decks } = this.props
+     // async componentDidUpdate(){
+    const { dispatch, decks } = this.props
     // var z =[]
     let wait 
     wait = await getDecks().then(res => {
@@ -77,6 +78,7 @@ class Deck extends React.Component {
     
   
   } 
+
 
   insertdat(){
     this.setState({dat: [{title:'test', questions:[]}]})
@@ -142,6 +144,22 @@ class Deck extends React.Component {
 
 
 
+    componentDidUpdate(){
+    // const { dispatch, decks } = this.props
+    // var z =[]
+    getDecks().then(res => {
+                                var data=[]
+                                // data.push(res)
+                                for (let key in res){
+                                  data.push(res[key])
+                                }
+                                
+                                this.setState({dat: data})
+                            }
+                    )
+    
+  
+  } 
 
 
   renderItem({ item }) {
@@ -198,7 +216,7 @@ class Deck extends React.Component {
                        <TouchableOpacity key={key}
                             style={styles.container}
                             onPress={() => this.props.navigation.navigate('Card',{title:item, deleteDeck:this.deleteDeck, deletet:false})}>
-                            <View><Text>{item.title}</Text></View>
+                            <View><Text>{item.title} #Cards:{item.questions.length}</Text></View>
                        </TouchableOpacity>
                     ))
                 }
